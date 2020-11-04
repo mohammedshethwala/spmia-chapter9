@@ -4,6 +4,9 @@ package com.thoughtmechanix.organization.controllers;
 import com.thoughtmechanix.organization.events.source.SimpleSourceBean;
 import com.thoughtmechanix.organization.model.Organization;
 import com.thoughtmechanix.organization.services.OrganizationService;
+
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +29,9 @@ public class OrganizationServiceController {
     @RequestMapping(value="/{organizationId}",method = RequestMethod.GET)
     public Organization getOrganization( @PathVariable("organizationId") String organizationId) {
         logger.debug("Entering the getOrganization() method for the organizationId: {}",organizationId);
-        Organization org = orgService.getOrg(organizationId);
-        org.setContactName(org.getContactName());
-        return org;
+        Optional<Organization> org = orgService.getOrg(organizationId);
+        org.get().setContactName(org.get().getContactName());
+        return org.get();
     }
 
     @RequestMapping(value="/{organizationId}",method = RequestMethod.PUT)

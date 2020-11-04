@@ -10,6 +10,7 @@ import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,7 +26,7 @@ public class OrganizationService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
-    public Organization getOrg
+    public Optional<Organization> getOrg
             (String organizationId) {
         Span newSpan = tracer.createSpan("getOrgDBCall");
 
@@ -54,7 +55,7 @@ public class OrganizationService {
     }
 
     public void deleteOrg(String orgId){
-        orgRepository.delete( orgId );
+        orgRepository.deleteById( orgId );
         simpleSourceBean.publishOrgChange("DELETE", orgId);
     }
 }
