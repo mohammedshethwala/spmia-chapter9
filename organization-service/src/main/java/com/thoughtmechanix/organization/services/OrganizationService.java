@@ -3,11 +3,13 @@ package com.thoughtmechanix.organization.services;
 import com.thoughtmechanix.organization.events.source.SimpleSourceBean;
 import com.thoughtmechanix.organization.model.Organization;
 import com.thoughtmechanix.organization.repository.OrganizationRepository;
+
+import brave.Span;
+import brave.Tracer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,7 +30,7 @@ public class OrganizationService {
 
     public Optional<Organization> getOrg
             (String organizationId) {
-        Span newSpan = tracer.createSpan("getOrgDBCall");
+        Span newSpan = tracer.nextSpan().name("getOrgDBCall").start();
 
         logger.debug("In the organizationService.getOrg() call");
         try {
@@ -36,8 +38,8 @@ public class OrganizationService {
         }
         finally{
           newSpan.tag("peer.service", "postgres");
-          newSpan.logEvent(org.springframework.cloud.sleuth.Span.CLIENT_RECV);
-          tracer.close(newSpan);
+//          newSpan.logEvent(org.springframework.cloud.sleuth.Span.CLIENT_RECV);
+          newSpan.finish();
         }
     }
 

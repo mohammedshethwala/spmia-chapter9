@@ -29,6 +29,29 @@ eureka:
     serviceUrl:
         defaultZone: http://localhost:8761/eureka/
 
+management:
+  endpoint:
+    health:      
+      enabled: true
+    env:
+      enabled: true
+    refresh:
+      enabled: true
+    beans:
+      enabled: true
+    routes:
+      enabled: true
+  endpoints:
+    web:      
+      exposure:        
+        include:        
+        - info
+        - env
+        - refresh
+        - beans
+        - loggers
+        - routes
+
 #
 #
 #  debug:

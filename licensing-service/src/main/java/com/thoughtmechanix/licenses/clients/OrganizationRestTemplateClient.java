@@ -3,12 +3,13 @@ package com.thoughtmechanix.licenses.clients;
 import com.thoughtmechanix.licenses.model.Organization;
 import com.thoughtmechanix.licenses.repository.OrganizationRedisRepository;
 
+import brave.Span;
+import brave.Tracer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class OrganizationRestTemplateClient {
     private static final Logger logger = LoggerFactory.getLogger(OrganizationRestTemplateClient.class);
 
     private Organization checkRedisCache(String organizationId) {
-       Span newSpan = tracer.createSpan("readLicensingDataFromRedis");
+       Span newSpan = tracer.nextSpan().name("readLicensingDataFromRedis").start();
         try {
             return orgRedisRepo.findOrganization(organizationId);
         }
@@ -38,8 +39,8 @@ public class OrganizationRestTemplateClient {
         }
         finally {
           newSpan.tag("peer.service", "redis");
-          newSpan.logEvent(org.springframework.cloud.sleuth.Span.CLIENT_RECV);
-          tracer.close(newSpan);
+//          newSpan.logEvent(Span.CLIENT_RECV);
+          newSpan.finish();
         }
     }
 
